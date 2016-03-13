@@ -17,6 +17,7 @@ class Handler(threading.Thread):
 		data = proc.communicate()[0]
 		buf = self.con.recv(1024)
 		while not buf.endswith('\r\n\r\n'):
+			print repr(buf)
 			buf += self.recv(1024)
 		self.con.send("HTTP/1.1 200 OK\r\n")
 		self.con.send("Server: RooImage v1.0\r\n")
