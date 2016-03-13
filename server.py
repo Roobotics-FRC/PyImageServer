@@ -15,20 +15,8 @@ class Handler(threading.Thread):
 		proc = subprocess.Popen("fswebcam --no-banner -d /dev/video0 /dev/stdout", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		proc.wait()
 		data = proc.communicate()[0]
-		print "Waiting for headers"
-		buf = self.con.recv(1024)
-		print "Waiting for response to complete"
-		while not buf.endswith('\r\n\r\n'):
-			print repr(buf)
-			buf += self.con.recv(1024)
-		self.con.send("HTTP/1.1 200 OK\r\n")
-		self.con.send("Server: RooImage v1.0\r\n")
-		self.con.send("Content-Type: image/jpeg\r\n")
-		self.con.send("Content-Length: {}\r\n".format(len(data)))
-		self.con.send("\r\n")
 		self.con.send(data)
 		self.con.close()
-
 
 def main(args):
 	if len(args) < 2:
