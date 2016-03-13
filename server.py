@@ -36,6 +36,7 @@ def main(args):
 	try:
 		while True:
 			con, addr = sock.accept()
+			print "[*] Connection from {}:{}".format(addr[0], addr[1])
 			handler = Handler(con, addr)
 			handler.start() if THREADED else handler.run()
 	except KeyboardInterrupt:
