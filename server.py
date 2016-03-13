@@ -15,7 +15,9 @@ class Handler(threading.Thread):
 		proc = subprocess.Popen("fswebcam --no-banner -d /dev/video0 /dev/stdout", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		proc.wait()
 		data = proc.communicate()[0]
+		print "Waiting for headers"
 		buf = self.con.recv(1024)
+		print "Waiting for response to complete"
 		while not buf.endswith('\r\n\r\n'):
 			print repr(buf)
 			buf += self.con.recv(1024)
