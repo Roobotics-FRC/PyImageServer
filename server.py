@@ -4,6 +4,8 @@ import sys
 import threading
 import subprocess
 
+THREADED=False
+
 class Handler(threading.Thread):
 	def __init__(self, con, addr):
 		super(Handler, self).__init__()
@@ -34,7 +36,8 @@ def main(args):
 	try:
 		while True:
 			con, addr = sock.accept()
-			Handler(con, addr).start()
+			handler = Handler(con, addr)
+			handler.start() if THREADED else handler.run()
 	except KeyboardInterrupt:
 		print "Shutting down..."
 	except EOFError:
