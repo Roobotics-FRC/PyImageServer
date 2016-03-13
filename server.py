@@ -12,7 +12,7 @@ class Handler(threading.Thread):
 		self.con = con
 		self.addr = addr
 	def run(self):
-		proc = subprocess.Popen("fswebcam -d /dev/video0 /dev/stdout", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		proc = subprocess.Popen("fswebcam --no-banner -d /dev/video0 /dev/stdout", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		proc.wait()
 		data = proc.communicate()[0]
 		self.con.send("HTTP/1.1 200 OK\r\n")
