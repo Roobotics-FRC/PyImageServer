@@ -15,6 +15,9 @@ class Handler(threading.Thread):
 		proc = subprocess.Popen("fswebcam --no-banner -d /dev/video0 /dev/stdout", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		proc.wait()
 		data = proc.communicate()[0]
+		buf = con.recv(1024)
+		while not buf.endswith('\r\n\r\n'):
+			buf += sock.recv(1024)
 		self.con.send("HTTP/1.1 200 OK\r\n")
 		self.con.send("Server: RooImage v1.0\r\n")
 		self.con.send("Content-Type: image/jpeg\r\n")
