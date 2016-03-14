@@ -16,9 +16,8 @@ class Handler(threading.Thread):
 	def run(self):
 		lock.acquire()
 		proc = subprocess.Popen(CMD, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		proc.wait()
-		lock.release()
 		data = proc.communicate()[0]
+		lock.release()
 		self.con.send(data)
 		self.con.close()
 
