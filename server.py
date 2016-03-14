@@ -4,7 +4,9 @@ import sys
 import threading
 import subprocess
 
-THREADED=False
+CMD="fswebcam --no-banner -d /dev/video0 /dev/stdout"
+
+lock = None
 
 class Handler(threading.Thread):
 	def __init__(self, con, addr):
@@ -12,8 +14,10 @@ class Handler(threading.Thread):
 		self.con = con
 		self.addr = addr
 	def run(self):
-		proc = subprocess.Popen("fswebcam --no-banner -d /dev/video0 /dev/stdout", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		lock.acquire()
+		proc = subprocess.Popen(CMD, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		proc.wait()
+		lock.release()
 		data = proc.communicate()[0]
 		self.con.send(data)
 		self.con.close()
@@ -27,12 +31,14 @@ def main(args):
 	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock.bind(("0.0.0.0", port))
 	sock.listen(8888)
+	global lock
+	lock = threading.Lock()
 	try:
 		while True:
 			con, addr = sock.accept()
 			print "[*] Connection from {}:{}".format(addr[0], addr[1])
 			handler = Handler(con, addr)
-			handler.start() if THREADED else handler.run()
+			handler.start()
 	except KeyboardInterrupt:
 		print "Shutting down..."
 	except EOFError:
